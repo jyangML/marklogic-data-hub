@@ -136,7 +136,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [stepName, description, collections, selectedSource, srcQuery, timestamp]);
+  }, [document.activeElement]);
 
   const hasFormChanged = () => {
     if (!isStepNameTouched

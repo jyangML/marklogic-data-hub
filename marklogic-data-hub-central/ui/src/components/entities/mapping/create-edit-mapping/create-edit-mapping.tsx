@@ -106,13 +106,13 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [mapName, description]);
+  }, [document.activeElement]);
 
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
     propagateSrcValidity();
-  }, [selectedSource, collections, srcQuery]);
+  }, [document.activeElement]);
 
   const hasFormChanged = () => {
     if (!isMapNameTouched

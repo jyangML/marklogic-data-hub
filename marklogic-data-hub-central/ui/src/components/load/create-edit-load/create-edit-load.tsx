@@ -136,7 +136,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [stepName, description, srcFormat, tgtFormat, sourceName, sourceType, outputUriPrefix, fieldSeparator, otherSeparator]);
+  }, [document.activeElement]);
 
   const hasFormChanged = () => {
     if (!isStepNameTouched
