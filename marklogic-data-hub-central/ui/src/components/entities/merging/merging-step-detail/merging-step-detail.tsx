@@ -381,7 +381,7 @@ const MergingStepDetail: React.FC = () => {
           </div>
           <div>
             <Table
-              rowKey="strategy"
+              rowKey={(record) => record.strategyName}
               className={styles.table}
               columns={mergeStrategyColumns}
               dataSource={mergeStrategiesData}
@@ -418,7 +418,7 @@ const MergingStepDetail: React.FC = () => {
             </div>
           </div>
           <MLTable
-            rowKey="rule"
+            rowKey={(record) => record.property}
             className={styles.table}
             columns={mergeRuleColumns}
             dataSource={mergeRulesData}
