@@ -132,9 +132,11 @@ function processContentWithStep(stepExecutionContext, contentArray, writeQueue) 
     return [];
   }
 
-  applyTargetCollectionsAdditivity(stepExecutionContext, contentArray);
   applyInterceptorsBeforeContentPersisted(outputContentArray, stepExecutionContext);
-
+  if (String(stepExecutionContext.combinedOptions.targetCollectionsAdditivity) == "true") {
+    applyTargetCollectionsAdditivity(outputContentArray);
+  }
+    
   if (hookRunner && !hookRunner.runBefore) {
     hookRunner.runHook();
   }
@@ -152,15 +154,14 @@ function processContentWithStep(stepExecutionContext, contentArray, writeQueue) 
   return outputContentArray;
 }
 
-function applyTargetCollectionsAdditivity(stepExecutionContext, contentArray) {
-  if (String(stepExecutionContext.combinedOptions.targetCollectionsAdditivity) == "true") {
-    contentArray.forEach(content => {
-      if (content.context.originalCollections) {
-        let collections = content.context.collections || [];
-        content.context.collections = collections.concat(content.context.originalCollections);
-      }
-    });
-  }
+function applyTargetCollectionsAdditivity(outputContentArray) {
+  outputContentArray.forEach(content => {
+    if (content.context.originalCollections) {
+      let collections = content.context.collections || [];
+      // dedupe items
+      content.context.collections = [...new Set(collections.concat(content.context.originalCollections))];
+    }
+  });
 }
 
 /**
@@ -215,6 +216,7 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
 
   for (var contentObject of contentArray) {
     const thisItem = contentObject.uri;
+    const originalCollections = contentObject.context.originalCollections || [];
     if (DEBUG_ENABLED) {
       hubUtils.hubTrace(DEBUG_EVENT, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
     }
@@ -224,7 +226,7 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
         stepExecutionContext.addCompletedItem(thisItem);
         for (const outputContent of outputSequence) {
           outputContent.previousUri = thisItem;
-          flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
+          flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId, originalCollections);
           if (DEBUG_ENABLED) {
             hubUtils.hubTrace(DEBUG_EVENT, `Returning content: ${xdmp.toJsonString(outputContent)}`);
           }

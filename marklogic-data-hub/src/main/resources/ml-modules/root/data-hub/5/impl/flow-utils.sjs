@@ -692,12 +692,16 @@ const sem = require("/MarkLogic/semantics.xqy");
  * @param stepName
  * @param jobId
  */
-function addMetadataToContent(content, flowName, stepName, jobId) {
+function addMetadataToContent(content, flowName, stepName, jobId, originalCollections) {
   content.context = content.context || {};
   content.context.metadata = createMetadata(content.context.metadata || {}, flowName, stepName, jobId);
 
   if (content.context.collections) {
     content.context.collections = hubUtils.normalizeToArray(content.context.collections);
+  }
+
+  if (originalCollections) {
+    content.context.originalCollections = originalCollections;
   }
 
   if (content.context.permissions) {
